@@ -1,0 +1,1 @@
+# kelime-ezber
