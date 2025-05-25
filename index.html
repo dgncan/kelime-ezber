@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7.Ünite Kelime Ezberleme Oyunu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .controls {
+            margin-bottom: 30px;
+        }
+
+        .mode-selector {
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: white;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .question {
+            font-size: 2em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .option.correct {
+            background: rgba(76, 175, 80, 0.7);
+            border-color: #4CAF50;
+        }
+
+        .option.wrong {
+            background: rgba(244, 67, 54, 0.7);
+            border-color: #f44336;
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .next-btn:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            border: none;
+            color: white;
+            padding: 20px 40px;
+            font-size: 1.3em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .result-message {
+            font-size: 1.3em;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-selector {
+            margin-bottom: 20px;
+        }
+
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            margin: 0 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .theme-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: white;
+        }
+
+        .achievements {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transform: translateX(400px);
+            transition: all 0.5s ease;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .achievements.show {
+            transform: translateX(0);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 1000;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .streak-counter {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid rgba(255, 193, 7, 0.5);
+            color: #FFC107;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .bounce {
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Tema Stilleri */
+        .theme-dark {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .theme-sunset {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        }
+
+        .theme-ocean {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .theme-forest {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .theme-fire {
+            background: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
+        }
+
+        .sound-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .mode-btn {
+                display: block;
+                margin: 5px auto;
+            }
+        }
+
+        /* Kelime Defteri Stilleri */
+        .dictionary-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-tab.active {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .word-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .pronounce-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .example-sentence {
+            font-style: italic;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Multiplayer Stilleri */
+        .multiplayer-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .player-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .player-card.active {
+            border: 2px solid #4CAF50;
+        }
+
+        .player-score {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .player-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .player-status.online {
+            background: #4CAF50;
+        }
+
+        .player-status.offline {
+            background: #f44336;
+        }
+
+        .room-code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <button class="sound-toggle" onclick="toggleSound()" title="Ses Aç/Kapat">🔊</button>
+        
+        <h1>🌍 7.Ünite Kelime Ezberleme Oyunu</h1>
+        
+        <div id="menu" class="menu">
+            <div class="theme-selector">
+                <div style="margin-bottom: 10px;">🎨 Tema Seç:</div>
+                <button class="theme-btn active" data-theme="ocean">🌊 Okyanus</button>
+                <button class="theme-btn" data-theme="dark">🌙 Karanlık</button>
+                <button class="theme-btn" data-theme="sunset">🌅 Gün Batımı</button>
+                <button class="theme-btn" data-theme="forest">🌲 Orman</button>
+                <button class="theme-btn" data-theme="fire">🔥 Ateş</button>
+            </div>
+            
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="en-to-tr">İngilizce → Türkçe</button>
+                <button class="mode-btn" data-mode="tr-to-en">Türkçe → İngilizce</button>
+                <button class="mode-btn" data-mode="mixed">Karışık</button>
+            </div>
+            <button class="start-btn" onclick="startGame()">Tek Oyunculu</button>
+            <button class="start-btn" onclick="showMultiplayer()">Çok Oyunculu</button>
+            <button class="start-btn" onclick="showDictionary()">Kelime Defteri</button>
+        </div>
+
+        <div id="multiplayer" class="hidden">
+            <div class="multiplayer-container">
+                <h2>Çok Oyunculu Mod</h2>
+                <div id="roomCode" class="room-code">
+                    Oda Kodu: <span id="code">Yükleniyor...</span>
+                    <button class="copy-btn" onclick="copyRoomCode()">📋</button>
+                </div>
+                <div class="player-list" id="playerList"></div>
+                <button class="start-btn" onclick="startMultiplayerGame()">Oyunu Başlat</button>
+                <button class="start-btn" onclick="showMenu()">Ana Menü</button>
+            </div>
+        </div>
+
+        <div id="joinRoom" class="hidden">
+            <div class="multiplayer-container">
+                <h2>Odaya Katıl</h2>
+                <div style="margin: 20px 0;">
+                    <input type="text" id="roomCodeInput" placeholder="Oda Kodunu Girin" style="padding: 10px; border-radius: 5px; border: none; width: 200px;">
+                    <button class="start-btn" onclick="joinRoom()">Katıl</button>
+                </div>
+                <button class="start-btn" onclick="showMenu()">Ana Menü</button>
+            </div>
+        </div>
+
+        <div id="game" class="hidden">
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-number" id="score">0</span>
+                    <span>Doğru</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="wrong">0</span>
+                    <span>Yanlış</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="total">0</span>
+                    <span>Toplam</span>
+                </div>
+            </div>
+
+            <div class="streak-counter hidden" id="streakCounter">
+                🔥 <span id="streakNumber">0</span> Doğru Üst Üste!
+            </div>
+
+            <div class="question-card">
+                <div class="question" id="question"></div>
+                <div class="options" id="options"></div>
+                <div class="result-message hidden" id="result"></div>
+                <button class="next-btn hidden" id="nextBtn" onclick="nextQuestion()">Sonraki Soru</button>
+            </div>
+
+            <button class="start-btn" onclick="showMenu()">Ana Menü</button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
+            Oyunu düzenleyen: Ali Erdem
+        </div>
+
+        <div id="dictionary" class="hidden">
+            <div class="category-tabs" id="categoryTabs"></div>
+            <div class="dictionary-container" id="wordList"></div>
+            <button class="start-btn" onclick="showMenu()">Ana Menü</button>
+        </div>
+    </div>
+
+    <!-- Başarı Bildirimi -->
+    <div class="achievements" id="achievement">
+        <div style="font-size: 1.2em; margin-bottom: 5px;">🏆 Başarı Kazandın!</div>
+        <div id="achievementText"></div>
+    </div>
+
+    <script>
+        const wordList = [
+            {
+                en: "air conditioning",
+                tr: "klima",
+                category: "ev",
+                example: "The air conditioning keeps the room cool in summer."
+            },
+            {
+                en: "air pollution",
+                tr: "hava kirliliği",
+                category: "çevre",
+                example: "Air pollution is a serious problem in big cities."
+            },
+            {
+                en: "amount",
+                tr: "miktar",
+                category: "genel",
+                example: "The amount of water in the bottle is decreasing."
+            },
+            {
+                en: "avoid",
+                tr: "kaçınmak",
+                category: "eylem",
+                example: "We should avoid using plastic bags."
+            },
+            {
+                en: "backfill",
+                tr: "doldurmak",
+                category: "eylem",
+                example: "The workers will backfill the hole after the pipe is installed."
+            },
+            {
+                en: "balance",
+                tr: "denge",
+                category: "genel",
+                example: "It's important to maintain a balance between work and life."
+            },
+            {
+                en: "basic",
+                tr: "temel",
+                category: "genel",
+                example: "These are the basic rules of the game."
+            },
+            {
+                en: "burn",
+                tr: "yakmak, yanmak",
+                category: "eylem",
+                example: "Don't burn plastic waste, it's harmful to the environment."
+            },
+            {
+                en: "buy eco-friendly products",
+                tr: "çevre dostu ürünler satın almak",
+                category: "çevre",
+                example: "We should buy eco-friendly products to protect the environment."
+            },
+            {
+                en: "careful",
+                tr: "dikkatli",
+                category: "sıfat",
+                example: "Be careful when crossing the street."
+            },
+            { en: "cause", tr: "neden olmak" },
+            { en: "centre", tr: "orta, merkez" },
+            { en: "chemicals", tr: "kimyasallar" },
+            { en: "classify / sort out", tr: "ayırmak, sınıflandırmak" },
+            { en: "climate change", tr: "iklim değişikliği" },
+            { en: "clue", tr: "ipucu" },
+            { en: "coal", tr: "kömür" },
+            { en: "cut down trees", tr: "ağaçları kesmek" },
+            { en: "damage", tr: "zarar / zarar vermek" },
+            { en: "danger", tr: "tehlike" },
+            { en: "dangerous", tr: "tehlikeli" },
+            { en: "deforestation", tr: "ormanların yok olması" },
+            { en: "destroy forests", tr: "ormanları yok etmek" },
+            { en: "device", tr: "cihaz" },
+            { en: "dig", tr: "kazmak" },
+            { en: "distance", tr: "mesafe" },
+            { en: "do your best", tr: "elinden geleni yapmak" },
+            { en: "drought", tr: "kuraklık" },
+            { en: "earth", tr: "dünya" },
+            { en: "effect", tr: "etki" },
+            { en: "efficient", tr: "verimli, etkili" },
+            { en: "effort", tr: "çaba, gayret" },
+            { en: "employee", tr: "işçi" },
+            { en: "environmentally friendly", tr: "çevre dostu" },
+            { en: "extinction of animals", tr: "hayvanların neslinin tükenmesi" },
+            { en: "field", tr: "tarla" },
+            { en: "fight against", tr: "-e karşı savaşmak" },
+            { en: "filter", tr: "filtre" },
+            { en: "flood", tr: "sel" },
+            { en: "fresh", tr: "taze" },
+            { en: "garbage", tr: "çöp" },
+            { en: "glacier", tr: "buzul" },
+            { en: "global warming", tr: "küresel ısınma" },
+            { en: "greenhouse effect", tr: "sera etkisi" },
+            { en: "greenhouse gas", tr: "sera gazı" },
+            { en: "grow", tr: "büyümek, gelişmek" },
+            { en: "harmful", tr: "zararlı" },
+            { en: "have a long shower", tr: "uzun duş almak" },
+            { en: "heat down", tr: "(ısıyı) kısmak" },
+            { en: "hole", tr: "delik" },
+            { en: "hunt animals", tr: "hayvanları avlamak" },
+            { en: "illegal hunting", tr: "yasadışı avlanma" },
+            { en: "important", tr: "önemli" },
+            { en: "increase", tr: "artmak / artış" },
+            { en: "inform", tr: "bilgi vermek" },
+            { en: "keep the streets clean", tr: "sokakları temiz tutmak" },
+            { en: "knead", tr: "yoğurmak" },
+            { en: "leave the lights on", tr: "ışıkları açık bırakmak" },
+            { en: "light a fire in the forest", tr: "ormanda ateş yakmak" },
+            { en: "melt", tr: "erimek" },
+            { en: "nature", tr: "doğa" },
+            { en: "necessary", tr: "gerekli" },
+            { en: "noise pollution", tr: "gürültü kirliliği" },
+            { en: "ocean", tr: "okyanus" },
+            { en: "ozone layer", tr: "ozon tabakası" },
+            { en: "paper mache", tr: "kartonpiyer" },
+            { en: "pick up rubbish", tr: "çöp toplamak" },
+            { en: "place", tr: "yerleştirmek" },
+            { en: "plant trees", tr: "ağaç dikmek" },
+            { en: "pollute the environment", tr: "çevreyi kirletmek" },
+            { en: "power plant", tr: "enerji santrali" },
+            { en: "precaution", tr: "önlem" },
+            { en: "prevent", tr: "önlemek" },
+            { en: "produce", tr: "üretmek" },
+            { en: "product", tr: "ürün" },
+            { en: "protect animals", tr: "hayvanları korumak" },
+            { en: "protect", tr: "korumak" },
+            { en: "provide", tr: "sağlamak" },
+            { en: "rapidly", tr: "hızla" },
+            { en: "reason", tr: "neden, sebep" },
+            { en: "recyclable", tr: "geri dönüştürülebilir" },
+            { en: "recycle paper, glass and plastic", tr: "kağıt, cam ve plastiği geri dönüştürmek" },
+            { en: "recycling bin", tr: "geri dönüşüm kutusu" },
+            { en: "reduce", tr: "azaltmak" },
+            { en: "renewable", tr: "yenilenebilir" },
+            { en: "resource", tr: "kaynak" },
+            { en: "respect", tr: "saygı" },
+            { en: "responsibility", tr: "sorumluluk" },
+            { en: "responsible", tr: "sorumlu" },
+            { en: "reusable", tr: "yeniden kullanılabilir" },
+            { en: "reuse", tr: "tekrar kullanmak" },
+            { en: "rise", tr: "artmak, yükselmek" },
+            { en: "sapling", tr: "fidan" },
+            { en: "save", tr: "korumak, tasarruf etmek" },
+            { en: "sea level", tr: "deniz seviyesi" },
+            { en: "seed", tr: "tohum" },
+            { en: "seriously", tr: "ciddi bir şekilde" },
+            { en: "smooth", tr: "pürüzsüz" },
+            { en: "soil", tr: "toprak" },
+            { en: "solve", tr: "çözmek" },
+            { en: "stop", tr: "bırakmak, son vermek" },
+            { en: "storm", tr: "fırtına" },
+            { en: "surface", tr: "yüzey" },
+            { en: "surround", tr: "çevirmek, sarmak" },
+            { en: "survive", tr: "hayatta kalmak" },
+            { en: "take action", tr: "harekete geçmek" },
+            { en: "tear", tr: "yırtmak" },
+            { en: "temperature", tr: "sıcaklık" },
+            { en: "threaten", tr: "tehdit etmek" },
+            { en: "throw rubbish into lakes, rivers or seas", tr: "göllere, nehirlere veya denizlere çöp atmak" },
+            { en: "tiny", tr: "minicik, küçücük" },
+            { en: "turn off / switch off the lights", tr: "ışıkları kapatmak" },
+            { en: "turn off the tap", tr: "musluğu kapatmak" },
+            { en: "unplug electrical devices", tr: "elektrikli cihazların fişini çekmek" },
+            { en: "unplug", tr: "fişi prizden çıkarmak" },
+            { en: "use both sides of paper", tr: "kağıdın her iki yüzünü kullanmak" },
+            { en: "use chemicals", tr: "kimyasallar kullanmak" },
+            { en: "use cloth bags", tr: "bez çanta kullanmak" },
+            { en: "use coal for heating", tr: "ısıtma için kömür kullanmak" },
+            { en: "use energy saving bulbs", tr: "enerji tasarruflu ampüller kullanmak" },
+            { en: "use fossil fuels", tr: "fosil yakıtlar kullanmak" },
+            { en: "use perfumes", tr: "parfüm kullanmak" },
+            { en: "use pesticides", tr: "böcek ilacı kullanmak" },
+            { en: "use plastic bags", tr: "plastik poşet kullanmak" },
+            { en: "use public transportation", tr: "toplu taşıma araçları kullanmak" },
+            { en: "use recycled materials", tr: "geri dönüştürülmüş malzemeler kullanmak" },
+            { en: "use renewable energy sources", tr: "yenilenebilir enerji kaynakları kullanmak" },
+            { en: "use solar / wind energy", tr: "güneş / rüzgar enerjisi kullanmak" },
+            { en: "vehicle", tr: "araç, taşıt" },
+            { en: "walk or cycle to short distances", tr: "kısa mesafelere yürüyerek veya bisikletle gitmek" },
+            { en: "warn", tr: "uyarmak" },
+            { en: "waste water and electricity", tr: "su ve elektriği boşa harcamak" },
+            { en: "waste", tr: "atık / israf etmek" },
+            { en: "wasting energy / water", tr: "enerjiyi / suyu boşa harcama" },
+            { en: "water pollution", tr: "su kirliliği" },
+            { en: "water", tr: "sulamak" },
+            { en: "wear fur", tr: "kürk giymek" },
+            { en: "wind energy", tr: "rüzgar enerjisi" }
+        ];
+
+        let currentMode = 'en-to-tr';
+        let score = 0;
+        let wrong = 0;
+        let total = 0;
+        let currentQuestion = null;
+        let answered = false;
+        let usedWords = [];
+        let streak = 0;
+        let soundEnabled = true;
+        let achievements = {
+            firstCorrect: false,
+            streak5: false,
+            streak10: false,
+            perfectTen: false,
+            speedDemon: false
+        };
+
+        let socket;
+        let roomCode;
+        let players = new Map();
+        let isHost = false;
+        let playerName = 'Oyuncu' + Math.floor(Math.random() * 1000);
+
+        // Mode selection
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentMode = this.dataset.mode;
+            });
+        });
+
+        // Theme selection
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Remove all theme classes
+                document.body.classList.remove('theme-dark', 'theme-sunset', 'theme-ocean', 'theme-forest', 'theme-fire');
+                
+                // Add selected theme
+                if (this.dataset.theme !== 'ocean') {
+                    document.body.classList.add('theme-' + this.dataset.theme);
+                }
+            });
+        });
+
+        // Ses efektleri
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            // Web Audio API ile basit ses efektleri
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'correct') {
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+            } else if (type === 'wrong') {
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+            } else if (type === 'achievement') {
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(554.37, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.2);
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.3);
+            }
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.querySelector('.sound-toggle');
+            btn.textContent = soundEnabled ? '🔊' : '🔇';
+        }
+
+        // Konfeti efekti
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        // Başarı sistemi
+        function checkAchievements() {
+            let newAchievement = null;
+            
+            if (score === 1 && !achievements.firstCorrect) {
+                achievements.firstCorrect = true;
+                newAchievement = "İlk Doğru Cevap! 🎯";
+            }
+            
+            if (streak === 5 && !achievements.streak5) {
+                achievements.streak5 = true;
+                newAchievement = "5 Doğru Üst Üste! 🔥";
+            }
+            
+            if (streak === 10 && !achievements.streak10) {
+                achievements.streak10 = true;
+                newAchievement = "10 Doğru Üst Üste! Muhteşem! ⭐";
+                createConfetti();
+            }
+            
+            if (score === 10 && wrong === 0 && !achievements.perfectTen) {
+                achievements.perfectTen = true;
+                newAchievement = "Mükemmel 10! Hiç yanlış yapmadın! 💎";
+                createConfetti();
+            }
+            
+            if (newAchievement) {
+                showAchievement(newAchievement);
+                playSound('achievement');
+            }
+        }
+
+        function showAchievement(text) {
+            const achievement = document.getElementById('achievement');
+            const achievementText = document.getElementById('achievementText');
+            achievementText.textContent = text;
+            achievement.classList.add('show');
+            
+            setTimeout(() => {
+                achievement.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateStreak(isCorrect) {
+            if (isCorrect) {
+                streak++;
+                if (streak >= 3) {
+                    const streakCounter = document.getElementById('streakCounter');
+                    const streakNumber = document.getElementById('streakNumber');
+                    streakNumber.textContent = streak;
+                    streakCounter.classList.remove('hidden');
+                }
+            } else {
+                streak = 0;
+                document.getElementById('streakCounter').classList.add('hidden');
+            }
+        }
+
+        function startGame() {
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('dictionary').classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
+            score = 0;
+            wrong = 0;
+            total = 0;
+            streak = 0;
+            usedWords = [];
+            achievements = {
+                firstCorrect: false,
+                streak5: false,
+                streak10: false,
+                perfectTen: false,
+                speedDemon: false
+            };
+            document.getElementById('streakCounter').classList.add('hidden');
+            updateStats();
+            nextQuestion();
+        }
+
+        function showMenu() {
+            document.getElementById('game').classList.add('hidden');
+            document.getElementById('dictionary').classList.add('hidden');
+            document.getElementById('menu').classList.remove('hidden');
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('wrong').textContent = wrong;
+            document.getElementById('total').textContent = total;
+        }
+
+        function getRandomWords(exclude, count = 3) {
+            const available = wordList.filter(word => !exclude.includes(word));
+            const shuffled = [...available].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function nextQuestion() {
+            if (usedWords.length >= wordList.length) {
+                usedWords = [];
+            }
+
+            answered = false;
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+
+            // Select random word
+            const availableWords = wordList.filter(word => !usedWords.includes(word));
+            currentQuestion = availableWords[Math.floor(Math.random() * availableWords.length)];
+            usedWords.push(currentQuestion);
+
+            // Determine question direction
+            let questionText, correctAnswer, questionLang;
+            
+            if (currentMode === 'en-to-tr') {
+                questionText = currentQuestion.en;
+                correctAnswer = currentQuestion.tr;
+                questionLang = 'en';
+            } else if (currentMode === 'tr-to-en') {
+                questionText = currentQuestion.tr;
+                correctAnswer = currentQuestion.en;
+                questionLang = 'tr';
+            } else { // mixed
+                const isEnToTr = Math.random() < 0.5;
+                if (isEnToTr) {
+                    questionText = currentQuestion.en;
+                    correctAnswer = currentQuestion.tr;
+                    questionLang = 'en';
+                } else {
+                    questionText = currentQuestion.tr;
+                    correctAnswer = currentQuestion.en;
+                    questionLang = 'tr';
+                }
+            }
+
+            document.getElementById('question').textContent = questionText;
+
+            // Generate wrong options
+            const wrongOptions = getRandomWords([currentQuestion], 3);
+            let options;
+            
+            if (questionLang === 'en') {
+                options = [correctAnswer, ...wrongOptions.map(w => w.tr)];
+            } else {
+                options = [correctAnswer, ...wrongOptions.map(w => w.en)];
+            }
+
+            // Shuffle options
+            options = options.sort(() => Math.random() - 0.5);
+
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option';
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(option, correctAnswer);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selected, correct) {
+            if (answered) return;
+            
+            answered = true;
+            total++;
+
+            const options = document.querySelectorAll('.option');
+            const questionCard = document.querySelector('.question-card');
+            
+            options.forEach(option => {
+                if (option.textContent === correct) {
+                    option.classList.add('correct');
+                } else if (option.textContent === selected && selected !== correct) {
+                    option.classList.add('wrong');
+                }
+            });
+
+            const resultDiv = document.getElementById('result');
+            if (selected === correct) {
+                score++;
+                updateStreak(true);
+                resultDiv.textContent = '🎉 Doğru! Tebrikler!';
+                resultDiv.style.background = 'rgba(76, 175, 80, 0.3)';
+                questionCard.classList.add('bounce');
+                playSound('correct');
+                checkAchievements();
+                
+                setTimeout(() => questionCard.classList.remove('bounce'), 600);
+            } else {
+                wrong++;
+                updateStreak(false);
+                resultDiv.textContent = `❌ Yanlış! Doğru cevap: ${correct}`;
+                resultDiv.style.background = 'rgba(244, 67, 54, 0.3)';
+                questionCard.classList.add('shake');
+                playSound('wrong');
+                
+                setTimeout(() => questionCard.classList.remove('shake'), 500);
+            }
+
+            resultDiv.classList.remove('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+            updateStats();
+        }
+
+        // Kelime defterini göster
+        function showDictionary() {
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('game').classList.add('hidden');
+            document.getElementById('dictionary').classList.remove('hidden');
+            
+            // Kategori sekmelerini oluştur
+            const categoryTabs = document.getElementById('categoryTabs');
+            categoryTabs.innerHTML = '';
+            
+            const categories = [...new Set(wordList.map(word => word.category))];
+            
+            categories.forEach(category => {
+                const tab = document.createElement('button');
+                tab.className = 'category-tab';
+                tab.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                tab.onclick = () => filterWordsByCategory(category);
+                categoryTabs.appendChild(tab);
+            });
+
+            // Tüm kelimeleri göster
+            showAllWords();
+        }
+
+        // Kelimeleri kategoriye göre filtrele
+        function filterWordsByCategory(category) {
+            const filteredWords = wordList.filter(word => word.category === category);
+            displayWords(filteredWords);
+            
+            // Aktif kategoriyi işaretle
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase() === category) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        // Tüm kelimeleri göster
+        function showAllWords() {
+            displayWords(wordList);
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+        }
+
+        // Kelimeleri görüntüle
+        function displayWords(words) {
+            const wordListContainer = document.getElementById('wordList');
+            wordListContainer.innerHTML = '';
+
+            words.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.className = 'word-card';
+                wordCard.innerHTML = `
+                    <div class="word-header">
+                        <div>
+                            <strong>${word.en}</strong> - ${word.tr}
+                            <button class="pronounce-btn" onclick="pronounceWord('${word.en}')">🔊</button>
+                        </div>
+                    </div>
+                    <div class="example-sentence">${word.example}</div>
+                `;
+                wordListContainer.appendChild(wordCard);
+            });
+        }
+
+        // Kelimeyi seslendir
+        function pronounceWord(word) {
+            if (!soundEnabled) return;
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            speechSynthesis.speak(utterance);
+        }
+
+        function showMultiplayer() {
+            alert('Çok oyunculu mod şu anda bakımda. Yakında tekrar aktif olacak!');
+            return;
+            // document.getElementById('menu').classList.add('hidden');
+            // document.getElementById('game').classList.add('hidden');
+            // document.getElementById('dictionary').classList.add('hidden');
+            // document.getElementById('joinRoom').classList.remove('hidden');
+        }
+
+        function joinRoom() {
+            const roomCode = document.getElementById('roomCodeInput').value.toUpperCase();
+            if (roomCode) {
+                socket.send(JSON.stringify({
+                    type: 'join_room',
+                    roomCode: roomCode,
+                    playerName: playerName
+                }));
+                document.getElementById('joinRoom').classList.add('hidden');
+                document.getElementById('multiplayer').classList.remove('hidden');
+            } else {
+                alert('Lütfen bir oda kodu girin!');
+            }
+        }
+
+        function initializeWebSocket() {
+            // WebSocket sunucusuna bağlan
+            const wsUrl = 'wss://kelime-ezber-server.onrender.com'; // Render.com'da host edilecek
+            socket = new WebSocket(wsUrl);
+
+            socket.onopen = () => {
+                console.log('WebSocket bağlantısı kuruldu');
+                // Yeni oda oluştur
+                socket.send(JSON.stringify({
+                    type: 'create_room',
+                    playerName: playerName
+                }));
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+
+            socket.onclose = () => {
+                console.log('WebSocket bağlantısı kapandı');
+                // Bağlantı koptuğunda yeniden bağlanmayı dene
+                setTimeout(initializeWebSocket, 3000);
+            };
+        }
+
+        function handleWebSocketMessage(data) {
+            switch (data.type) {
+                case 'room_created':
+                    roomCode = data.roomCode;
+                    isHost = true;
+                    document.getElementById('code').textContent = roomCode;
+                    break;
+
+                case 'player_joined':
+                    players.set(data.playerId, {
+                        name: data.playerName,
+                        score: 0,
+                        isActive: true
+                    });
+                    updatePlayerList();
+                    break;
+
+                case 'player_left':
+                    players.delete(data.playerId);
+                    updatePlayerList();
+                    break;
+
+                case 'game_started':
+                    startMultiplayerGame();
+                    break;
+
+                case 'answer_result':
+                    updatePlayerScore(data.playerId, data.isCorrect);
+                    break;
+            }
+        }
+
+        function updatePlayerList() {
+            const playerList = document.getElementById('playerList');
+            playerList.innerHTML = '';
+
+            players.forEach((player, id) => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                if (id === socket.id) playerCard.classList.add('active');
+
+                playerCard.innerHTML = `
+                    <div class="player-status ${player.isActive ? 'online' : 'offline'}"></div>
+                    <div class="player-name">${player.name}</div>
+                    <div class="player-score">Puan: ${player.score}</div>
+                `;
+
+                playerList.appendChild(playerCard);
+            });
+        }
+
+        function updatePlayerScore(playerId, isCorrect) {
+            const player = players.get(playerId);
+            if (player) {
+                player.score += isCorrect ? 10 : 0;
+                updatePlayerList();
+            }
+        }
+
+        function startMultiplayerGame() {
+            if (isHost) {
+                socket.send(JSON.stringify({
+                    type: 'start_game'
+                }));
+            }
+            // Oyunu başlat
+            document.getElementById('multiplayer').classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
+            startGame();
+        }
+
+        function copyRoomCode() {
+            const code = document.getElementById('code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Oda kodu kopyalandı!');
+            });
+        }
+    </script>
+</body>
+</html>
