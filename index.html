@@ -524,10 +524,13 @@
 
         <div id="joinRoom" class="hidden">
             <div class="multiplayer-container">
-                <h2>Odaya Katıl</h2>
+                <h2>Çok Oyunculu Mod</h2>
                 <div style="margin: 20px 0;">
-                    <input type="text" id="roomCodeInput" placeholder="Oda Kodunu Girin" style="padding: 10px; border-radius: 5px; border: none; width: 200px;">
-                    <button class="start-btn" onclick="joinRoom()">Katıl</button>
+                    <button class="start-btn" onclick="createRoom()" style="margin-bottom: 10px;">Yeni Oda Oluştur</button>
+                    <div style="margin: 20px 0;">
+                        <input type="text" id="roomCodeInput" placeholder="Oda Kodunu Girin" style="padding: 10px; border-radius: 5px; border: none; width: 200px;">
+                        <button class="start-btn" onclick="joinRoom()">Odaya Katıl</button>
+                    </div>
                 </div>
                 <button class="start-btn" onclick="showMenu()">Ana Menü</button>
             </div>
@@ -1194,18 +1197,13 @@
 
                 socket.onopen = () => {
                     console.log('WebSocket bağlantısı kuruldu');
-                    if (isHost) {
-                        // Yeni oda oluştur
-                        socket.send(JSON.stringify({
-                            type: 'create_room',
-                            playerName: playerName
-                        }));
-                    }
+                    // Bağlantı kurulduğunda otomatik oda oluşturma işlemini kaldırdık
                 };
 
                 socket.onmessage = (event) => {
                     try {
                         const data = JSON.parse(event.data);
+                        console.log('Gelen mesaj:', data); // Debug için
                         handleWebSocketMessage(data);
                     } catch (error) {
                         console.error('Mesaj işleme hatası:', error);
@@ -1229,11 +1227,13 @@
         }
 
         function handleWebSocketMessage(data) {
+            console.log('İşlenen mesaj:', data); // Debug için
             switch (data.type) {
                 case 'room_created':
                     roomCode = data.roomCode;
                     isHost = true;
                     document.getElementById('code').textContent = roomCode;
+                    console.log('Oda oluşturuldu:', roomCode); // Debug için
                     break;
 
                 case 'player_joined':
@@ -1308,6 +1308,20 @@
             navigator.clipboard.writeText(code).then(() => {
                 alert('Oda kodu kopyalandı!');
             });
+        }
+
+        function createRoom() {
+            isHost = true;
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'create_room',
+                    playerName: playerName
+                }));
+                document.getElementById('joinRoom').classList.add('hidden');
+                document.getElementById('multiplayer').classList.remove('hidden');
+            } else {
+                alert('Bağlantı kurulamadı. Lütfen sayfayı yenileyin.');
+            }
         }
     </script>
 </body>
