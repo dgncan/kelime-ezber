@@ -513,7 +513,7 @@
             <div class="multiplayer-container">
                 <h2>Çok Oyunculu Mod</h2>
                 <div id="roomCode" class="room-code">
-                    Oda Kodu: <span id="code">Yükleniyor...</span>
+                    Oda Kodu: <span id="code">-</span>
                     <button class="copy-btn" onclick="copyRoomCode()">📋</button>
                 </div>
                 <div class="player-list" id="playerList"></div>
@@ -1169,6 +1169,20 @@
             initializeWebSocket();
         }
 
+        function createRoom() {
+            isHost = true;
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'create_room',
+                    playerName: playerName
+                }));
+                // Oda oluşturma isteği gönderildi, cevap bekliyoruz
+                document.getElementById('code').textContent = 'Oluşturuluyor...';
+            } else {
+                alert('Bağlantı kurulamadı. Lütfen sayfayı yenileyin.');
+            }
+        }
+
         function joinRoom() {
             const roomCode = document.getElementById('roomCodeInput').value.toUpperCase();
             if (roomCode) {
@@ -1179,8 +1193,8 @@
                         roomCode: roomCode,
                         playerName: playerName
                     }));
-                    document.getElementById('joinRoom').classList.add('hidden');
-                    document.getElementById('multiplayer').classList.remove('hidden');
+                    // Odaya katılma isteği gönderildi, cevap bekliyoruz
+                    document.getElementById('code').textContent = 'Katılınıyor...';
                 } else {
                     alert('Bağlantı kurulamadı. Lütfen sayfayı yenileyin.');
                 }
@@ -1191,19 +1205,18 @@
 
         function initializeWebSocket() {
             try {
-                // WebSocket sunucusuna bağlan
                 const wsUrl = 'wss://kelime-ezber-server.onrender.com';
                 socket = new WebSocket(wsUrl);
 
                 socket.onopen = () => {
                     console.log('WebSocket bağlantısı kuruldu');
-                    // Bağlantı kurulduğunda otomatik oda oluşturma işlemini kaldırdık
+                    document.getElementById('code').textContent = '-';
                 };
 
                 socket.onmessage = (event) => {
                     try {
                         const data = JSON.parse(event.data);
-                        console.log('Gelen mesaj:', data); // Debug için
+                        console.log('Gelen mesaj:', data);
                         handleWebSocketMessage(data);
                     } catch (error) {
                         console.error('Mesaj işleme hatası:', error);
@@ -1212,28 +1225,40 @@
 
                 socket.onclose = () => {
                     console.log('WebSocket bağlantısı kapandı');
-                    // Bağlantı koptuğunda yeniden bağlanmayı dene
+                    document.getElementById('code').textContent = 'Bağlantı koptu';
                     setTimeout(initializeWebSocket, 3000);
                 };
 
                 socket.onerror = (error) => {
                     console.error('WebSocket hatası:', error);
+                    document.getElementById('code').textContent = 'Bağlantı hatası';
                     alert('Bağlantı hatası oluştu. Lütfen sayfayı yenileyin.');
                 };
             } catch (error) {
                 console.error('WebSocket başlatma hatası:', error);
+                document.getElementById('code').textContent = 'Bağlantı hatası';
                 alert('Bağlantı kurulamadı. Lütfen sayfayı yenileyin.');
             }
         }
 
         function handleWebSocketMessage(data) {
-            console.log('İşlenen mesaj:', data); // Debug için
+            console.log('İşlenen mesaj:', data);
             switch (data.type) {
                 case 'room_created':
                     roomCode = data.roomCode;
                     isHost = true;
                     document.getElementById('code').textContent = roomCode;
-                    console.log('Oda oluşturuldu:', roomCode); // Debug için
+                    document.getElementById('joinRoom').classList.add('hidden');
+                    document.getElementById('multiplayer').classList.remove('hidden');
+                    console.log('Oda oluşturuldu:', roomCode);
+                    break;
+
+                case 'room_joined':
+                    roomCode = data.roomCode;
+                    document.getElementById('code').textContent = roomCode;
+                    document.getElementById('joinRoom').classList.add('hidden');
+                    document.getElementById('multiplayer').classList.remove('hidden');
+                    console.log('Odaya katılınıldı:', roomCode);
                     break;
 
                 case 'player_joined':
@@ -1260,6 +1285,7 @@
 
                 case 'error':
                     alert(data.message);
+                    document.getElementById('code').textContent = '-';
                     break;
             }
         }
@@ -1308,20 +1334,6 @@
             navigator.clipboard.writeText(code).then(() => {
                 alert('Oda kodu kopyalandı!');
             });
-        }
-
-        function createRoom() {
-            isHost = true;
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'create_room',
-                    playerName: playerName
-                }));
-                document.getElementById('joinRoom').classList.add('hidden');
-                document.getElementById('multiplayer').classList.remove('hidden');
-            } else {
-                alert('Bağlantı kurulamadı. Lütfen sayfayı yenileyin.');
-            }
         }
     </script>
 </body>
