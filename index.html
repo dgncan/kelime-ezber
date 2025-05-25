@@ -1157,41 +1157,29 @@
         }
 
         function showMultiplayer() {
-            alert('Çok oyunculu mod şu anda bakımda. Yakında tekrar aktif olacak!');
-            return;
-            // document.getElementById('menu').classList.add('hidden');
-            // document.getElementById('game').classList.add('hidden');
-            // document.getElementById('dictionary').classList.add('hidden');
-            // document.getElementById('joinRoom').classList.remove('hidden');
-        }
-
-        function joinRoom() {
-            const roomCode = document.getElementById('roomCodeInput').value.toUpperCase();
-            if (roomCode) {
-                socket.send(JSON.stringify({
-                    type: 'join_room',
-                    roomCode: roomCode,
-                    playerName: playerName
-                }));
-                document.getElementById('joinRoom').classList.add('hidden');
-                document.getElementById('multiplayer').classList.remove('hidden');
-            } else {
-                alert('Lütfen bir oda kodu girin!');
-            }
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('game').classList.add('hidden');
+            document.getElementById('dictionary').classList.add('hidden');
+            document.getElementById('joinRoom').classList.remove('hidden');
+            
+            // WebSocket bağlantısını başlat
+            initializeWebSocket();
         }
 
         function initializeWebSocket() {
             // WebSocket sunucusuna bağlan
-            const wsUrl = 'wss://kelime-ezber-server.onrender.com'; // Render.com'da host edilecek
+            const wsUrl = 'wss://kelime-ezber-server.onrender.com';
             socket = new WebSocket(wsUrl);
 
             socket.onopen = () => {
                 console.log('WebSocket bağlantısı kuruldu');
-                // Yeni oda oluştur
-                socket.send(JSON.stringify({
-                    type: 'create_room',
-                    playerName: playerName
-                }));
+                if (isHost) {
+                    // Yeni oda oluştur
+                    socket.send(JSON.stringify({
+                        type: 'create_room',
+                        playerName: playerName
+                    }));
+                }
             };
 
             socket.onmessage = (event) => {
@@ -1203,6 +1191,11 @@
                 console.log('WebSocket bağlantısı kapandı');
                 // Bağlantı koptuğunda yeniden bağlanmayı dene
                 setTimeout(initializeWebSocket, 3000);
+            };
+
+            socket.onerror = (error) => {
+                console.error('WebSocket hatası:', error);
+                alert('Bağlantı hatası oluştu. Lütfen sayfayı yenileyin.');
             };
         }
 
@@ -1234,6 +1227,10 @@
 
                 case 'answer_result':
                     updatePlayerScore(data.playerId, data.isCorrect);
+                    break;
+
+                case 'error':
+                    alert(data.message);
                     break;
             }
         }
